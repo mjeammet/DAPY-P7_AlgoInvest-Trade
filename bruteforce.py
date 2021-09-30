@@ -1,30 +1,32 @@
 import csv
 import datetime
-MAX_SPENT = 500
 
-file_path = "./test_datasets/dataset1_Python+P7.csv"
-data = []
+file_path = "./test_datasets/test_dataset.csv.txt"
 
-### READING CSV FILE
-with open(file_path, mode ='r') as file:
-   
-    # reading the CSV file
-    csvFile = csv.DictReader(file)
-    # simply csv.reader for a list of list
- 
-    # displaying the contents of the CSV file
-    for line in csvFile:
-        # print(line)
-        action = dict(line)
-        price = float(action["price"])        
-        if price <= 0:
-            # print(action)
-            next
-        else:
-            action["gain"] = (price * float(action["profit"])/100)
-            action["price"] = float(action['price'])
-            data.append(action)
-            # use tuple (name, gain) ? 
+def load_file(path):
+    data = []
+
+    ### READING CSV FILE
+    with open(file_path, mode ='r') as file:
+    
+        # reading the CSV file
+        csvFile = csv.DictReader(file)
+        # simply csv.reader for a list of list
+    
+        # displaying the contents of the CSV file
+        for line in csvFile:
+            # print(line)
+            action = dict(line)
+            price = float(action["price"])        
+            if price <= 0:
+                # print(action)
+                next
+            else:
+                action["gain"] = (price * float(action["profit"])/100)
+                action["price"] = float(action['price'])
+                data.append(action)
+                # use tuple (name, gain) ? 
+    return data
 
 ### BRUTEFORCING MY WAY OUT OF THIS
 # 2 ** n AKA the worst thing ever
@@ -62,19 +64,18 @@ def print_results(result):
     print("Bought:")
     for action_num in optimized_achats:
         action = data[action_num]
-        price = float(action["price"])
-        print(f"{action['name']} ({price}€)")
-        total_cost += price
+        price_in_eur = float(action["price"])
+        print(f"{action['name']} ({price_in_eur}€)")
+        total_cost += price_in_eur
 
     print(
         f"\nTotal cost: {total_cost}\n",
         f"Profit: {optimized_profit}")
-
-def maximize_profit_time(rep = 10):
+def maximize_profit_timed(max_spent, rep = 1):
     total_elapsed = datetime.timedelta(0)
     for i in range(rep):
         start = datetime.datetime.now()
-        optimized_achats = maximize_profit(0, 500, 0)
+        optimized_achats = maximize_profit(0, max_spent, 0)
         end = datetime.datetime.now()
         elapsed = end - start
         total_elapsed += elapsed
@@ -83,7 +84,7 @@ def maximize_profit_time(rep = 10):
     print(f"Number of runs : {rep}\tAverage of {total_elapsed / rep} seconds per run.")
     print_results(optimized_achats)
 
-
+data = load_file(file_path)
 data = data[:19]
 # print(len(data))
 # 19|500 ~ 0.67s avec la liste descendante et remontante (20a )
@@ -91,4 +92,4 @@ data = data[:19]
 # 19|500 ~ 0.54s avec la liste triée et le return des gens sans le sou (20|500 = 1.12s, 21|500 = 1.94s, ~3.7.10^274 années)
 # 19|500 ~ 0.41s si on fait money restante - price (au lieu de money depensée + price < 500) et convertir les prix en float direct
 data = sorted(data,key= lambda x:x["price"])
-maximize_profit_time(rep=1)
+maximize_profit_timed(500)
