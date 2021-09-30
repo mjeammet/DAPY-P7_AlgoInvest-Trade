@@ -87,7 +87,7 @@ def print_results(actions_list):
         f"Profit: {optimized_profit}")
 
 if __name__ == '__main__':
-    file_path = "./test_datasets/test_dataset.csv.txt"
+    file_path = "./test_datasets/test_dataset.csv"
     data = load_csv(file_path)
     # data = data[:101]
     MAX_SPENT = 50000 # in cents

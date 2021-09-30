@@ -1,7 +1,7 @@
 import csv
 import datetime
 
-file_path = "./test_datasets/test_dataset.csv.txt"
+file_path = "./test_datasets/test_dataset.csv"
 
 def load_file(path):
     data = []
