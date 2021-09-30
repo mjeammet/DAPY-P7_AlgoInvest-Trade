@@ -26,8 +26,6 @@ def load_csv(file_path):
     return data
 
 def maximize_profit(data, max_spent):
-    # crazy_table = [[0]*len(data)]*len(data) # nested lists so not working, OMG 
-
     profit_matrix = []
     for data_index in range(len(data)):
         profit_matrix.append([])
@@ -89,8 +87,8 @@ def print_results(actions_list):
 if __name__ == '__main__':
     file_path = "./test_datasets/test_dataset.csv"
     data = load_csv(file_path)
-    # data = data[:101]
-    MAX_SPENT = 50000 # in cents
+    data = data[:20]
+    MAX_SPENT = 5000 # in cents
     sorted_data = sorted(data,key= lambda x:x["gain"], reverse=True)
     profit_matrix = maximize_profit(sorted_data, MAX_SPENT)
     results = recursive_knap(len(data)-1, MAX_SPENT, [])

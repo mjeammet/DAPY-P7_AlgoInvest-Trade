@@ -85,11 +85,11 @@ def maximize_profit_timed(max_spent, rep = 1):
     print_results(optimized_achats)
 
 data = load_file(file_path)
-data = data[:19]
+data = data[:20]
 # print(len(data))
 # 19|500 ~ 0.67s avec la liste descendante et remontante (20a )
 # 19|500 ~ 0.59s avec la liste remontante seulement (20|500 = 1.19 s, 100|50 = 0.71s)
 # 19|500 ~ 0.54s avec la liste triée et le return des gens sans le sou (20|500 = 1.12s, 21|500 = 1.94s, ~3.7.10^274 années)
 # 19|500 ~ 0.41s si on fait money restante - price (au lieu de money depensée + price < 500) et convertir les prix en float direct
 data = sorted(data,key= lambda x:x["price"])
-maximize_profit_timed(500)
+maximize_profit_timed(50)
