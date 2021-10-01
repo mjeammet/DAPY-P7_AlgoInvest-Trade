@@ -1,8 +1,6 @@
 import csv
 import datetime
 
-file_path = "./test_datasets/test_dataset.csv"
-
 def load_file(path):
     data = []
 
@@ -43,7 +41,7 @@ def maximize_profit(index_of_action, remaining_money, total_gain):
         notbought_profit, notbought_list = maximize_profit(index_of_action+1, remaining_money, total_gain)
 
         # say i buy this action
-        if remaining_money > action["price"]:
+        if remaining_money >= action["price"]:
             bought_profit, bought_list = maximize_profit(index_of_action+1, remaining_money-action["price"], total_gain+float(action["gain"]))
         else:
             # allowed by the fact actions are sorted by price
@@ -71,6 +69,7 @@ def print_results(result):
     print(
         f"\nTotal cost: {total_cost}\n",
         f"Profit: {optimized_profit}")
+
 def maximize_profit_timed(max_spent, rep = 1):
     total_elapsed = datetime.timedelta(0)
     for i in range(rep):
@@ -84,12 +83,13 @@ def maximize_profit_timed(max_spent, rep = 1):
     print(f"Number of runs : {rep}\tAverage of {total_elapsed / rep} seconds per run.")
     print_results(optimized_achats)
 
+file_path = "./test_datasets/test_dataset.csv"
 data = load_file(file_path)
-data = data[:20]
-# print(len(data))
+# data = data[:10]
+# [print(action) for action in data]
 # 19|500 ~ 0.67s avec la liste descendante et remontante (20a )
 # 19|500 ~ 0.59s avec la liste remontante seulement (20|500 = 1.19 s, 100|50 = 0.71s)
 # 19|500 ~ 0.54s avec la liste triée et le return des gens sans le sou (20|500 = 1.12s, 21|500 = 1.94s, ~3.7.10^274 années)
 # 19|500 ~ 0.41s si on fait money restante - price (au lieu de money depensée + price < 500) et convertir les prix en float direct
 data = sorted(data,key= lambda x:x["price"])
-maximize_profit_timed(50)
+maximize_profit_timed(500)
