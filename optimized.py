@@ -17,11 +17,13 @@ def load_csv(file_path):
         for line in csvFile:
             # print(line)
             action = dict(line)
-            if float(action["price"]) <= 0 or float(action["profit"]) < 0:
+            price = int(float(action["price"])*100)
+            profit = float(action["profit"])
+            if price <= 0 or profit < 0:
                 next
             else:
-                action["price"] = int(float(action["price"])*100)
-                action["gain"] = float(action["price"] * float(action["profit"])/100)
+                action["price"] = price
+                action["gain"] = price * profit/100
                 # action["profitability"] = float(action["profit"])/price # ? 
                 data.append(action)
                 # use tuple (name, gain) ?
@@ -59,7 +61,7 @@ def make_profit_matrix(data, max_spent):
 # * i: We can include items 1 through i in the knapsack
 # * j: maximum weight of the knapsack
 # */
-def recursive_knap(action_index, remaining_money, list_of_bought_actions):
+def recursive_knap(profit_matrix, data, action_index, remaining_money, list_of_bought_actions = []):
     # print(profit_matrix[action_index][remaining_money])
     # print(f"Checking {action_index},{remaining_money} (having already bought {list_of_bought_actions})")
 
@@ -71,12 +73,12 @@ def recursive_knap(action_index, remaining_money, list_of_bought_actions):
         if profit_matrix[action_index][remaining_money] > profit_matrix[action_index-1][remaining_money]:
             price = data[action_index]['price']
             list_of_bought_actions.append(action_index)
-            return recursive_knap(action_index-1, remaining_money-price, list_of_bought_actions)
+            return recursive_knap(profit_matrix, data, action_index-1, remaining_money-price, list_of_bought_actions)
         else:
             # not bought
-            return recursive_knap(action_index-1, remaining_money, list_of_bought_actions)
+            return recursive_knap(profit_matrix, data, action_index-1, remaining_money, list_of_bought_actions)
 
-def print_results(actions_list):
+def print_results(data, actions_list, sep="\t"):
     optimized_achats = actions_list
     total_cost = 0
     optimized_profit = 0
@@ -84,17 +86,19 @@ def print_results(actions_list):
     for action_index in optimized_achats:
         action = data[action_index]
         price_in_eur = action["price"]/100
-        print(f"{action['name']} ({price_in_eur}€)")
+        gain = action["gain"]/100
+        print(f"{action['name']}{sep}{price_in_eur}{sep}{action['profit']}{sep}{gain}")
         total_cost += price_in_eur
-        optimized_profit += float(action["gain"])
+        optimized_profit += gain
 
     print(
-        f"\nTotal cost: {total_cost}\n",
-        f"Profit: {optimized_profit/100}")
+        f"\nTotal cost: {round(total_cost,2)}\n",
+        f"Profit: {round(optimized_profit,2)}")
 
-if __name__ == '__main__':
-    file_path = "./test_datasets/test_dataset.csv"
-    # file_path = "./test_datasets/dataset1_Python+P7.csv"
+
+def main():
+    # file_path = "./test_datasets/test_dataset.csv"
+    file_path = "./test_datasets/dataset2_Python+P7.csv"
     data = load_csv(file_path)
     # data = [
     #     {"name":"action1", "price":2, "gain": 2},
@@ -102,14 +106,23 @@ if __name__ == '__main__':
     #     {"name":"action3", "price":8, "gain": 33},
     #     {"name":"action4", "price":2, "gain": 27},
     # ]
+
+    ### Subsetting data
     # data = data[:10]
     # [print(action) for action in data]
-    MAX_SPENT = 50000 # in cents
+    MAX_SPENT = 5000 # in cents
     data = [action for action in data if action["price"] <= MAX_SPENT]
-    # sorted_data = sorted(data,key= lambda x:x["gain"], reverse=True)
+    data = sorted(data,key= lambda x:x["price"])
+
+    # Generate the matrix M(0...n, 0...W)
     profit_matrix = make_profit_matrix(data, MAX_SPENT)
     # [print(line_num, profit_matrix[line_num]) for line_num in range(len(profit_matrix))]
-    results = recursive_knap(len(data)-1, MAX_SPENT, [])
-    print_results(results)
+
+    # From maximum gain, recursively browse the matrix towards 0,0
+    results = recursive_knap(profit_matrix, data, len(data)-1, MAX_SPENT)
+    print_results(data, results)
 
     # Tester 15 - 2300 parce que ça avait l'air de bugger pour un index out of range ?
+
+if __name__ == '__main__':
+    main()
