@@ -134,7 +134,7 @@ def main():
     MAX_SPENT = 50000 # in cents (10 is a good pick for fake data tests)
 
     # Loading dataset
-    file_path = "./test_datasets/dataset2_Python+P7.csv"
+    file_path = "./datasets/dataset2_Python+P7.csv"
     data = load_csv(file_path) #or load_fake_data()
     data = [action for action in data if action["price"] <= MAX_SPENT]
     # [print(action) for action in data]
