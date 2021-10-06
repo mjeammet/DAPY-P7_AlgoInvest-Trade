@@ -81,9 +81,8 @@ def bruteforce_algo(data, max_spent, timed=True):
 
 def main():
     MAX_INVESTED = 500
-    file_path = "./test_datasets/test_dataset.csv"
+    file_path = "./test_datasets/test_dataset.csv" # or "./test_datasets/dataset1_Python+P7.csv" 
     data = load_file(file_path)
-    # data = data[:10]
     # [print(action) for action in data]
     # 19|500 ~ 0.67s avec la liste descendante et remontante
     # 19|500 ~ 0.59s avec la liste remontante seulement (20|500 = 1.19 s, 100|50 = 0.71s)

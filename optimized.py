@@ -19,7 +19,7 @@ def load_csv(file_path):
             if float(action["price"]) > 0 and float(action["profit"]) > 0:
                 action["price"] = int(float(action["price"])*100)
                 action["gain"] = action["price"] * float(action["profit"])/100
-                # action["ror"] = action["gain"]/action["price"]
+                action["profit"] = float(action["profit"])
                 data.append(action)
     return data
 
@@ -85,12 +85,12 @@ def recursive_knap(profit_matrix, data, action_index, remaining_money, list_of_b
             return recursive_knap(profit_matrix, data, action_index-1, remaining_money, list_of_bought_actions)
    
 
-def greedy_algo(data, max_money):    
-    data = sorted(data, key= lambda action:action["gain"]/action["price"], reverse=True)
+def greedy_algo(data, max_money):
+    data = sorted(data, key= lambda action:action["profit"], reverse=True)
     list_of_bought_actions = []
     remaining_money = max_money
     total_gain = 0
-    for action in data:
+    for action in data:       
         if remaining_money > action["price"]:
             list_of_bought_actions.append(action)
             remaining_money -= action["price"]
@@ -102,41 +102,40 @@ def greedy_algo(data, max_money):
 def load_fake_data():
     """Fake dataset for demonstration and testing purposes"""
     return [
-    {"name":"FA1", "price":3, "profit": 0.66, "gain": 2},
-    {"name":"FA2", "price":5, "profit": 1, "gain": 5},
-    {"name":"FA3", "price":8, "profit": 3, "gain": 24},
-    {"name":"FA4", "price":2, "profit": .5, "gain": 1},
-    {"name":"FA5", "price":1, "profit": 2, "gain": 2},
+    {"name":"FS1", "price":1, "profit": 2, "gain": 2},
+    {"name":"FS2", "price":10, "profit": 1, "gain": 10},
+    # {"name":"FA3", "price":4, "profit": 1.5, "gain": 6},
     ]
 
 
 def print_results(actions_list, runtime, sep="\t"):
     """Show results Sienna's style"""
-    selected_actions = actions_list
+    selected_actions = sorted(actions_list, key= lambda action: (action["profit"],action['price']), reverse=True)
     total_cost = 0
     total_gain = 0
-
 
     print(f"Results generated in {runtime}. Bought:")
     for action in selected_actions:
         price_in_eur = action["price"]/100
         total_cost += price_in_eur
-        total_gain += action["gain"]/100
-        # print(f"{action['name']}{sep}{price_in_eur}{sep}{action['profit']}{sep}{gain}{sep}{ror}")
+        gain = action["gain"]/100
+        total_gain += gain
         print(f"{action['name']}{sep}{price_in_eur}")
+        # print(f"{action['name']}{sep}{price_in_eur}{sep}{action['profit']}{sep}{gain}")
+        
 
     print(
-        f"\nTotal cost: {round(total_cost,2)}\n",
-        f"Profit: {round(total_gain,2)}")
+        f"\nTotal cost: {round(total_cost,2)}€\n",
+        f"Profit: {round(total_gain,2)}€")
 
 
 def main():
-    ALGO = "greedy"
+    ALGO = "knapsack"
     MAX_SPENT = 50000 # in cents (10 is a good pick for fake data tests)
 
     # Loading dataset
-    file_path = "./test_datasets/dataset1_Python+P7.csv"
-    data = load_csv(file_path) # or load_fake_data()
+    file_path = "./test_datasets/dataset2_Python+P7.csv"
+    data = load_csv(file_path) #or load_fake_data()
     data = [action for action in data if action["price"] <= MAX_SPENT]
     # [print(action) for action in data]
     if data == []:
